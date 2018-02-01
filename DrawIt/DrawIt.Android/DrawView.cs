@@ -1,6 +1,8 @@
 ﻿using Android.Views;
 using Android.Graphics;
 using Android.Content;
+using System.Collections.Generic;
+using System;
 
 namespace DrawIt.Android
 {
@@ -18,6 +20,7 @@ namespace DrawIt.Android
         public float PenWidth { get; set; }
 
         private Path DrawPath;
+        private List<PointF> Points = new List<PointF>();
         private Paint DrawPaint;
         private Paint CanvasPaint;
         private Canvas DrawCanvas;
@@ -72,9 +75,22 @@ namespace DrawIt.Android
             {
                 case MotionEventActions.Down:
                     DrawPath.MoveTo(touchX, touchY);
+                    Points.Add(new PointF(touchX, touchY));
                     break;
                 case MotionEventActions.Move:
-                    DrawPath.LineTo(touchX, touchY);
+                    PointF previousPoint = Points[Points.Count - 1];
+                    Points.Add(new PointF(touchX, touchY));
+                    if (Math.Abs(previousPoint.X - touchX) > 0.75 && Math.Abs(previousPoint.Y - touchY) > 0.75)
+                    {
+                        // Use the QuadTo() method if a minimum amount of pen movement has occurred, to prevent
+                        // a "bleeding" issue.
+                        DrawPath.QuadTo(previousPoint.X, previousPoint.Y, (touchX + previousPoint.X) / 2, (touchY + previousPoint.Y) / 2);
+                    }
+                    else
+                    {
+                        // Otherwise, just connect the last point with a line (not as smooth as QuadTo).
+                        DrawPath.LineTo(touchX, touchY);
+                    }
                     break;
                 case MotionEventActions.Up:
                     DrawCanvas.DrawPath(DrawPath, DrawPaint);

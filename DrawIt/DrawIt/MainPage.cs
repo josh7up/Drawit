@@ -43,12 +43,6 @@ namespace DrawIt
 				},
                 Children =
                 {
-                  {new Label {
-				        Text = "Draw It",
-				        Font = Font.BoldSystemFontOfSize (50),
-				        HorizontalOptions = LayoutOptions.CenterAndExpand,
-				        VerticalOptions = LayoutOptions.FillAndExpand
-	        		    }, 0, 2, 0, 1},
                   {BuildPalletFrame(), 0, 1},
                   {new ContentView {
                        Content = BuildDrawingFrame(),
@@ -75,7 +69,6 @@ namespace DrawIt
 
             foreach (var button in ColorPallete.Select(color => new Button
             {
-                Text = color.Key,
                 TextColor = GetTextColor(color.Value),
                 BackgroundColor = color.Value,
                 Font = Font.BoldSystemFontOfSize(NamedSize.Medium),
